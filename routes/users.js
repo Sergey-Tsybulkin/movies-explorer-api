@@ -4,8 +4,7 @@ const { updateUserValidation } = require('../validations/usersValidation');
 
 const { getUserId, updateUserProfile } = require('../controllers/users');
 
-router.get('/me', getUserId); // Finding a user
-router.patch('/me', updateUserValidation, updateUserProfile); // Profile update
-// router.post('/me/signout', signout);
+router.get('/users/me', getUserId); // Finding a user
+router.patch('/users/me', updateUserValidation, updateUserProfile); // Profile update
 
 module.exports = router;
