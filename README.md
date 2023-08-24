@@ -1,3 +1,3 @@
 # movies-explorer-api
 
-API URL: 
+API URL: api.moviepoisk.nomoredomainsicu.ru
