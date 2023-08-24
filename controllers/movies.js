@@ -6,7 +6,7 @@ const NotFound = require('../errors/NotFoundError');
 
 const getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
-    .orFail(new NotFoundError('Movie with specified id not found'))
+    .orFail(new NotFound('Movie with specified id not found'))
     .then((movies) => res.send({ movies }))
     .catch(next);
 };

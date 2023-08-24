@@ -4,13 +4,12 @@ const User = require('../models/user');
 
 const config = require('../config');
 
-
 const ConflictError = require('../errors/ConflictError');
 const BadRequestError = require('../errors/BadRequestError');
 
 module.exports.registrationUser = (req, res, next) => {
   const {
-    email, password, name
+    email, password, name,
   } = req.body;
   bcrypt
     .hash(password, 10)

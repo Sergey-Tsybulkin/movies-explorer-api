@@ -2,8 +2,8 @@ const { ValidationError } = require('mongoose').Error;
 // const { CastError } = require('mongoose').Error;
 const User = require('../models/user');
 
-const NotFoundError = require('../errors/NotFoundError');
-const BadRequestError = require('../errors/BadRequestError');
+const NotFound = require('../errors/NotFoundError');
+const BadRequest = require('../errors/BadRequestError');
 
 module.exports.getUserId = (req, res, next) => {
   const userId = req.user._id;
@@ -30,10 +30,10 @@ const updateUserProfileData = (userId, data) => User.findByIdAndUpdate(userId, d
   if (user) {
     return user;
   }
-  throw new NotFoundError('User with specified _id not found');
+  throw new NotFound('User with specified _id not found');
 }).catch((err) => {
   if (err instanceof ValidationError) {
-    throw new BadRequestError('Incorrect data sent when updating information');
+    throw new BadRequest('Incorrect data sent when updating information');
   }
   throw err;
 });

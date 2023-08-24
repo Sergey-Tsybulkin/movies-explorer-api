@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const { Schema } = mongoose;
-const config = require('../config');
 
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
