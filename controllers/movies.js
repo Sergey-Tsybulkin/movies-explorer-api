@@ -1,13 +1,14 @@
 const Movie = require('../models/movie');
 
-const BadRequest = require('../errors/BadRequestError');
-const Forbidden = require('../errors/ForbiddenError');
-const NotFound = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
+const ForbiddenError = require('../errors/ForbiddenError');
+const NotFoundError = require('../errors/NotFoundError');
 
 const getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
-    .orFail(new NotFound('Movie with specified id not found'))
-    .then((movies) => res.send({ movies }))
+    .then((movies) => {
+      res.send(movies);
+    })
     .catch(next);
 };
 
@@ -35,17 +36,30 @@ const createMovie = (req, res, next) => {
     image,
     trailerLink,
     thumbnail,
-    owner: req.user._id,
     movieId,
     nameRU,
     nameEN,
+    owner: req.user._id,
   })
-    .then((movie) => res.status(201).send({ movie }))
-    .catch(next);
+    .then((movie) => res.send(movie))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(
+          new BadRequestError(
+            'Incorrect data passed during movie card creation',
+          ),
+        );
+      } else {
+        next(err);
+      }
+    });
 };
 
 const deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
+    .orFail(() => {
+      throw new NotFoundError('Фильм с указанным идентификатором не найден');
+    })
     .then((movie) => {
       const owner = movie.owner.toString();
       if (req.user._id === owner) {
@@ -55,12 +69,12 @@ const deleteMovie = (req, res, next) => {
           })
           .catch(next);
       } else {
-        throw new Forbidden('Movie cannot be deleted');
+        throw new ForbiddenError('Фильм нельзя удалить');
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequest('Invalid deletion data sent'));
+        next(new BadRequestError('Отправлены неверные данные для удаления'));
       } else {
         next(err);
       }

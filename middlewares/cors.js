@@ -6,20 +6,20 @@ const allowedCors = [
 ];
 
 module.exports = (req, res, next) => {
-  const { origin } = req.headers; // Save the origin of the request to the origin variable
-  const { method } = req; // Save the request type (HTTP method) to the variable
+  const { origin } = req.headers;
+  const { method } = req;
   const requestHeaders = req.headers['access-control-request-headers'];
   const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
   res.header('Access-Control-Allow-Credentials', true);
 
-  if (allowedCors.includes(origin)) { // Check that the request source is allowed
-    res.header('Access-Control-Allow-Origin', origin); // Set a header that allows browser requests from this origin
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
   }
 
   if (method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS); // Allow cross-domain requests of any type
-    res.header('Access-Control-Allow-Headers', requestHeaders); // Allow cross-domain requests with these headers
-    return res.end(); // We complete the processing of the request and return the result
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+    return res.end();
   }
   return next();
 };

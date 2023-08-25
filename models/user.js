@@ -13,7 +13,7 @@ const userSchema = new Schema(
       unique: true,
       validate: {
         validator: (email) => /.+@.+\..+/.test(email),
-        message: 'Необходимо ввести электронный адрес',
+        message: 'Вам необходимо ввести действующий адрес электронной почты',
       },
     },
     password: {

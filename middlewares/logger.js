@@ -9,7 +9,6 @@ const errorLoggerMiddlewere = expressWinston.errorLogger({
   format: winston.format.json(),
 });
 
-// middleware for loggin
 const requestLoggerMiddlewere = expressWinston.logger({
   transports: [
     new winston.transports.File({ filename: 'request.log' }),

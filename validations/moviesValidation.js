@@ -1,4 +1,5 @@
-const { celebrate, Joi } = require('celebrate');
+const { Joi, celebrate } = require('celebrate');
+
 const config = require('../config');
 
 const createMovieValidator = celebrate({

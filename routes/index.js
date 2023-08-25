@@ -1,21 +1,25 @@
 const router = require('express').Router();
 
 const auth = require('../middlewares/auth');
+
+const userRouter = require('./users');
+const movieRouter = require('./movies');
+
+const { registrationUser, loginUser } = require('../controllers/auth');
+const { signInValidation, signUpValidation } = require('../validations/authValidation');
+
 const NotFoundError = require('../errors/NotFoundError');
 
-// Routes for Authentication
-router.use('/', require('./signin'));
-router.use('/', require('./signup'));
+router.post('/signup', signUpValidation, registrationUser);
+router.post('/signin', signInValidation, loginUser);
 
 router.use(auth);
 
-// Routes for user
-router.use('/users', require('./users'));
+router.use('/', userRouter);
+router.use('/', movieRouter);
 
-// Routes for movies
-router.use('/movies', require('./movies'));
-
-// Handling non-existent routes
-router.use((req, res, next) => next(new NotFoundError('The page at the requested URL does not exist')));
+router.use('*', (req, res, next) => {
+  next(new NotFoundError('Page not found'));
+});
 
 module.exports = router;

@@ -31,7 +31,7 @@ const movieSchema = new Schema(
       required: true,
       validate: {
         validator: (url) => config.REGEX.test(url),
-        message: 'Вам необходимо ввести действительный URL-адрес',
+        message: 'Вам необходимо ввести действительный URL-адрес.',
       },
     },
     trailerLink: {

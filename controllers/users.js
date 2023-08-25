@@ -1,48 +1,51 @@
-const { ValidationError } = require('mongoose').Error;
-// const { CastError } = require('mongoose').Error;
 const User = require('../models/user');
 
-const NotFound = require('../errors/NotFoundError');
-const BadRequest = require('../errors/BadRequestError');
+const NotFoundError = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
+const ConflictError = require('../errors/ConflictError');
 
-module.exports.getUserId = (req, res, next) => {
+const getUserId = (req, res, next) => {
   const userId = req.user._id;
-  User.findUserById(userId)
-    .orFail(() => {
-      throw new NotFound('User by specified _id not found');
-    })
+  User.findById(userId).orFail(() => {
+    throw new NotFoundError('Пользователь с указанным идентификатором не найден');
+  })
     .then((user) => {
       res.send(user);
     })
-    .catch((event) => {
-      if (event.name === 'CastError') {
-        next(new BadRequest('The requested user was not found'));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Пользователь по указанному запросу не найден'));
       } else {
-        next(event);
+        next(err);
       }
     });
 };
 
-const updateUserProfileData = (userId, data) => User.findByIdAndUpdate(userId, data, {
-  new: true,
-  runValidators: true,
-}).then((user) => {
-  if (user) {
-    return user;
-  }
-  throw new NotFound('User with specified _id not found');
-}).catch((err) => {
-  if (err instanceof ValidationError) {
-    throw new BadRequest('Incorrect data sent when updating information');
-  }
-  throw err;
-});
-
-module.exports.updateUserProfile = (req, res, next) => {
+const updateUserProfile = (req, res, next) => {
   const { email, name } = req.body;
-  const { userId } = req.user;
-
-  updateUserProfileData(userId, { email, name })
-    .then((user) => res.send(user))
-    .catch((err) => next(err));
+  User.findByIdAndUpdate(
+    req.user._id,
+    { email, name },
+    { new: true, runValidators: true },
+  ).orFail(() => {
+    throw new NotFoundError('Пользователь с указанным идентификатором не найден');
+  })
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError('Это пользователь уже существует'));
+      } else if (err.name === 'ValidationError') {
+        next(
+          new BadRequestError(
+            'При обновлении информации отправлены неверные данные',
+          ),
+        );
+      } else {
+        next(err);
+      }
+    });
 };
+
+module.exports = { getUserId, updateUserProfile };
