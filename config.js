@@ -9,7 +9,7 @@ if (NODE_ENV === 'production') {
 const PORT = 3000;
 const DB_URL = 'mongodb://127.0.0.1:27017/bitfilmsdb';
 const SOME_SECRET_KEY = 'dev-secret';
-const { SIGNING_SECRET_KEY = 'dev-secret' } = process.env;// Секретный ключ подписи
+const { SIGNING_SECRET_KEY = 'dev-secret' } = process.env;
 // const { SOME_SECRET_KEY = 'dev-secret' } = process.env;
 const REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 
